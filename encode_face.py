@@ -2,7 +2,7 @@ import face_recognition
 import numpy as np
 import sys
 
-def encode_face(image_path: str, save_path: str = "C:/Users/skyla/Desktop/FocuSSU_Project123123/my_face.npy"): # 사진 경로 
+def encode_face(image_path: str, save_path: str = "사 용 자 얼 굴 사 진 경 로 (ex : my_face.jpg)"): # 사진 경로 
     image = face_recognition.load_image_file(image_path)
     encodings = face_recognition.face_encodings(image)
 
