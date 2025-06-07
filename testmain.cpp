@@ -11,7 +11,7 @@ using namespace cv;
 using namespace cv::face;
 using namespace std;
 
-// »ç¿ëÀÚ ¾ó±¼ ÁÂÇ¥ ºÒ·¯¿À±â
+// ì‚¬ìš©ì ì–¼êµ´ ì¢Œí‘œ ë¶ˆëŸ¬ì˜¤ê¸°
 vector<Rect> loadUserFaceRects(const string& filename) {
     vector<Rect> rects;
     ifstream file(filename);
@@ -34,20 +34,20 @@ vector<Rect> loadUserFaceRects(const string& filename) {
     return rects;
 }
 
-// IoU ¹æ½ÄÀ¸·Î ÁÂÇ¥ ºñ±³
+// IoU ë°©ì‹ìœ¼ë¡œ ì¢Œí‘œ ë¹„êµ
 bool isUserFaceArea(const Rect& face, const vector<Rect>& userRects) {
     for (const Rect& user : userRects) {
         Rect intersect = face & user;
         float iou = (float)intersect.area() / (face.area() + user.area() - intersect.area());
         if (iou > 0.3f) return true;
 
-        cout << "¾ó±¼ ºñ±³ " << face <<  user << ", IoU=" << iou << endl;
+        cout << "ì–¼êµ´ ë¹„êµ " << face <<  user << ", IoU=" << iou << endl;
     }
 
     return false;
 }
 
-// ¾ó±¼ ¸ğÀÚÀÌÅ© Å¬·¡½º Á¤ÀÇ
+// ì–¼êµ´ ëª¨ìì´í¬ í´ë˜ìŠ¤ ì •ì˜
 class FaceMosaic {
 public:
     FaceMosaic(const string& cascadeFile) {
@@ -60,7 +60,7 @@ public:
     Mat processImage(const string& imageFile, const vector<Rect>& userRects) {
         Mat img = imread(imageFile);
         if (img.empty()) {
-            cerr << "ÀÌ¹ÌÁö ·Îµù ¿À·ù!" << endl;
+            cerr << "ì´ë¯¸ì§€ ë¡œë”© ì˜¤ë¥˜!" << endl;
             exit(-1);
         }
 
@@ -69,10 +69,10 @@ public:
       
 
         for (const Rect& face : faces) {
-            cout << "Å½ÁöµÈ ¾ó±¼: " << face << endl;
+            cout << "íƒì§€ëœ ì–¼êµ´: " << face << endl;
             
             if (!isUserFaceArea(face, userRects)) {
-                applyMosaic(img, face, 0.1);  // scale°ªÀ¸·Î °­µµ Á¶Àı °¡´É // ¿ÜºÎ face_mosaic ÇÔ¼ö È£Ãâ
+                applyMosaic(img, face, 0.1);  // scaleê°’ìœ¼ë¡œ ê°•ë„ ì¡°ì ˆ ê°€ëŠ¥ // ì™¸ë¶€ face_mosaic í•¨ìˆ˜ í˜¸ì¶œ
             }
         }
 
@@ -88,17 +88,17 @@ private:
 };
 
 int main() {
-    string cascadeFile = "C:/Users/LJM/Desktop/FocuSSU_Project/haarcascade_frontalface_default.xml";
-    string imageFile = "C:/Users/LJM/Desktop/FocuSSU_Project/compare_face.jpg";
-    string outputFile = "C:/Users/LJM/Desktop/FocuSSU_Project/result.jpg";
-    string userFaceBoxFile = "C:/Users/LJM/Desktop/FocuSSU_Project/user_faces.txt";
+    string cascadeFile = "C:/Users/haarcascade_frontalface_default.xml";   //haarcascade ê²½ë¡œ
+    string imageFile = "C:/Users/compare_face.jpg";
+    string outputFile = "C:/Users/result.jpg";
+    string userFaceBoxFile = "C:/Users/user_faces.txt";
 
     FaceMosaic faceMosaic(cascadeFile);
     vector<Rect> userFaceRects = loadUserFaceRects(userFaceBoxFile);
 
     Mat processedImage = faceMosaic.processImage(imageFile, userFaceRects);
 
-    // Ãâ·Â ÀÌ¹ÌÁö Ãà¼Ò
+    // ì¶œë ¥ ì´ë¯¸ì§€ ì¶•ì†Œ
     int targetWidth = 800;
     float scale = static_cast<float>(targetWidth) / processedImage.cols;
     Size newSize(targetWidth, static_cast<int>(processedImage.rows * scale));
